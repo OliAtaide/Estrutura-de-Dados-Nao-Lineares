@@ -1,10 +1,9 @@
 public class Node {
-	private int bf;
-	private int key;
+	private int bf, key, height;
 	private Node parent, left, right;
 
 	public Node(){
-
+		
 	}
 
 	public Node(int key) {
@@ -16,12 +15,13 @@ public class Node {
 		return bf;
 	}
 
-	public void setBF(int bf){
-		this.bf = bf;
-	}
-
+	
 	public int getKey() {
 		return key;
+	}
+	
+	public int getHeight(){
+		return height;
 	}
 
 	public Node getParent() {
@@ -36,8 +36,15 @@ public class Node {
 		return right;
 	}
 
+	public void setBF(int bf){
+		this.bf = bf;
+	}
 	public void setKey(int key) {
 		this.key = key;
+	}
+
+	public void setHeight(int height){
+		this.height = height;
 	}
 
 	public void setParent(Node parent) {

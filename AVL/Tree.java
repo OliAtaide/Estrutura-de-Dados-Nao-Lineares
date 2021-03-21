@@ -11,9 +11,10 @@ public class Tree {
 
 	public boolean insert(int key) {
 		if (key == 0){
+			System.out.println(key);
 			return false;
 		}
-		if(key != root.getKey()){
+		if(root == null || key != root.getKey()){
 			root = insert(root, key);
 			count++;
 			return true;
@@ -27,10 +28,12 @@ public class Tree {
 		}
 		if(key < node.getKey()){
 			Node left = insert(node.getLeft(), key);
+			left.setParent(node);
 			node.setLeft(left);
 		}
 		else{
 			Node right = insert(node.getRight(), key);
+			right.setParent(node);
 			node.setRight(right);
 		}
 		update(node);
@@ -117,7 +120,7 @@ public class Tree {
 		if (node.getRight() != null) {
 			rh = height(node.getRight());
 		}
-		return 1 + Math.max(lh, rh);
+		return Math.max(lh, rh);
 	}
 
 	public int depth(Node node) {

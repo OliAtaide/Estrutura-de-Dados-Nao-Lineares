@@ -6,7 +6,8 @@ public class Main {
 		int[][] vector = new int[h][w];
 		for (int i = 0; i < w; i++) {
 			Node n = t.nodes.get(i);
-			vector[t.depth(n)][i] = n.getBF();
+			int d = t.depth(n);
+			vector[d][i] = n.getBF();
 		}
 		for (int l = 0; l < h; l++) {
 			for (int c = 0; c < w; c++) {
@@ -29,6 +30,10 @@ public class Main {
 		t.insert(27);
 		t.insert(57);
 		t.insert(44);
+
+		System.out.println(t.getRoot().getKey());
+		System.out.println(t.getRoot().getLeft().getKey());
+		System.out.println(t.getRoot().getRight().getKey());
 
 		printTree(t);
 

@@ -41,17 +41,16 @@ public class Tree {
 	}
 	
 	public void update(Node node){
-		int leftHeight = -1;
-		int rightHeight = -1;
-		Node left = node.getLeft();
-		Node right = node.getRight();
+		int leftHeight = -1, rightHeight = -1;
+		Node left = node.getLeft(), right = node.getRight();
 		if(left != null){
-			leftHeight = height(left);
+			leftHeight = left.getHeight();
 		}
 		if(right != null){
-			rightHeight = height(right);
+			rightHeight = right.getHeight();
 		}
-		node.setBF(leftHeight + rightHeight);
+		node.setHeight(1 + Math.max(leftHeight, rightHeight));
+		node.setBF(rightHeight - leftHeight);
 	}
 
 	public Node balance(Node node){
@@ -127,7 +126,7 @@ public class Tree {
 		if (node == root) {
 			return 0;
 		} else {
-			return 1 + depth(node.getParent());
+			return depth(node.getParent());
 		}
 	}
 }

@@ -1,13 +1,13 @@
 public class Main {
 	public static void printTree(Tree t) {
-		int h = t.height(t.getRoot());
+		int h = t.getRoot().getHeight()+1;
 		t.inOrder(t.getRoot());
 		int w = t.nodes.size();
 		int[][] vector = new int[h][w];
 		for (int i = 0; i < w; i++) {
 			Node n = t.nodes.get(i);
-			int d = t.depth(n);
-			vector[d][i] = n.getBF();
+			int d = n.getHeight();
+			vector[d][i] = n.getKey();
 		}
 		for (int l = 0; l < h; l++) {
 			for (int c = 0; c < w; c++) {

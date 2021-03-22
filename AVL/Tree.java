@@ -39,6 +39,7 @@ public class Tree {
 				return null;
 			}
 			node.setLeft(left);
+			left.setParent(node);
 		}
 		else if(key > node.getKey()){
 			Node right = insert(node.getRight(), key);
@@ -46,6 +47,7 @@ public class Tree {
 				return null;
 			}
 			node.setRight(right);
+			right.setParent(node);
 		}else{
 			return null;
 		}
@@ -54,34 +56,33 @@ public class Tree {
 	}
 	
 	public void update(Node node){
-		int leftHeight = -1, rightHeight = -1;
-		Node left = node.getLeft(), right = node.getRight();
-		if(left != null){
-			leftHeight = left.getHeight();
+		int lh = 0, rh = 0;
+		if (node.getLeft() != null) {
+			lh = node.getLeft().getHeight();
 		}
-		if(right != null){
-			rightHeight = right.getHeight();
+		if (node.getRight() != null) {
+			rh = node.getRight().getHeight();
 		}
-		System.out.println(node.getKey() + " - " + leftHeight + " - " + rightHeight);
-		node.setHeight(1 + Math.max(leftHeight, rightHeight));
-		node.setBF(rightHeight - leftHeight);
+		node.setHeight(1 + Math.max(lh, rh));
+		node.setBF(lh - rh);
+		System.out.println(node.getKey() + " - " + lh + ", " + rh + " - " + node.getBF());
 	}
 
 	public Node balance(Node node){
 		if (node.getBF() == -2){
-			if(node.getLeft().getBF() <= 0){
-				return rightRotate(node);
-			}
-			else{
-				return doubleRightRotate(node);
-			}
-		}
-		else if (node.getBF() == 2){
-			if(node.getRight().getBF() >= 0){
+			if(node.getRight().getBF() <= 0){
 				return leftRotate(node);
 			}
 			else{
 				return doubleLeftRotate(node);
+			}
+		}
+		else if (node.getBF() == 2){
+			if(node.getLeft().getBF() >= 0){
+				return rightRotate(node);
+			}
+			else{
+				return doubleRightRotate(node);
 			}
 		}
 		return node;
@@ -90,19 +91,29 @@ public class Tree {
 	public Node leftRotate(Node a){
 		Node b = a.getRight();
 		a.setRight(b.getLeft());
+		b.getLeft().setParent(a);
 		b.setLeft(a);
-		update(a);
-		update(b);
+		a.setParent(b);
+		updateAfterRotation(a, b);
 		return b;
 	}
 
 	public Node rightRotate(Node a){
 		Node b = a.getLeft();
 		a.setLeft(b.getRight());
+		b.getRight().setParent(a);
 		b.setRight(a);
-		update(a);
-		update(b);
+		a.setParent(b);
+		updateAfterRotation(a, b);
 		return b;
+	}
+
+	public void updateAfterRotation(Node a, Node b){
+		int b_bf = b.getBF();
+		int a_bf = a.getBF();
+
+		b.setBF(b_bf + 1 - Math.min(a_bf, 0));
+		a.setBF(a_bf + 1 + Math.max(b.getBF(), 0));
 	}
 
 	public Node doubleRightRotate(Node node){
@@ -133,7 +144,8 @@ public class Tree {
 		if (node.getRight() != null) {
 			rh = height(node.getRight());
 		}
-		return 1 + Math.max(lh, rh);
+		node.setHeight(1 + Math.max(lh, rh));
+		return node.getHeight();
 	}
 
 	public int depth(Node node) {

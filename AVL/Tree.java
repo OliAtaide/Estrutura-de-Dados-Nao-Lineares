@@ -54,6 +54,89 @@ public class Tree {
 		update(node);
 		return balance(node);
 	}
+
+	public boolean remove (int key){
+		Node r = remove(root, key);
+
+		if(r != null){
+			root = r;
+			count--;
+			return true;
+		}
+		return false;
+	}
+
+	private Node remove(Node node, int key){
+		if(node == null){
+			return null;
+		}
+		if(key < node.getKey()){
+			Node left = remove(node.getLeft(), key);
+			if(left == null){
+				return null;
+			}
+			node.setLeft(left);
+			left.setParent(node);
+		}
+		else if (key > node.getKey()){
+			Node right = remove(node.getRight(), key);
+			if(right == null){
+				return null;
+			}
+			node.setRight(right);
+			right.setParent(node);
+		}
+		else{
+			Node left = node.getLeft();
+			Node right = node.getRight();
+			if(left == null){
+				return right;
+			}
+			else if(right == null){
+				return left;
+			}
+			else{
+				if(left.getHeight() > right.getHeight()){
+					int newKey = maxKey(left);
+					node.setKey(newKey);
+
+					Node r = remove(left, newKey);
+					if (r == null){
+						return null;
+					}
+					node.setLeft(r);
+					r.setParent(node);
+				}
+				else{
+					int newKey = minKey(right);
+					node.setKey(newKey);
+
+					Node r = remove(right, newKey);
+					if(r == null){
+						return null;
+					}
+					node.setRight(r);
+					r.setParent(node);
+				}
+			}
+		}
+		update(node);
+		return balance(node);
+	}
+
+	private int minKey(Node node){
+		while(node.getLeft() != null){
+			node = node.getLeft();
+		}
+		return node.getKey();
+	}
+
+	private int maxKey(Node node){
+		while(node.getRight() != null){
+			node = node.getRight();
+		}
+		return node.getKey();
+	}
 	
 	public void update(Node node){
 		int lh = 0, rh = 0;
@@ -152,7 +235,7 @@ public class Tree {
 		if (node == root) {
 			return 0;
 		} else {
-			return depth(node.getParent());
+			return 1 + depth(node.getParent());
 		}
 	}
 }

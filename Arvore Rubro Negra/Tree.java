@@ -142,101 +142,147 @@ public class Tree {
 		n.setParent(l);
 	}
 
-
-	/*public void insert(int key) {
-		Node n = new Node(key);
-		if (root == null) {
-			root = n;
-		} else {
-			Node node = root;
-			Node parent;
-			while (true) {
-				parent = node;
-				if (key < node.getKey()) {
-					node = node.getLeft();
-					if (node == null) {
-						parent.setLeft(n);
-						n.setParent(parent);
-						return;
-					}
-				} else {
-					node = node.getRight();
-					if (node == null) {
-						parent.setRight(n);
-						n.setParent(parent);
-						return;
-					}
-				}
-			}
+	private Node search(int key, Node n){
+		if (n == nil){
+			return nil;
+		}
+		else if(n.getKey() == key){
+			return n;
+		}
+		else if(n.getKey() < key){
+			return search(key, n.getRight());
+		}
+		else{
+			return search(key, n.getLeft());
 		}
 	}
 
-	public boolean remove(int key) {
-		Node node = root;
-		Node parent = root;
-		boolean ItsLeft = true;
-
-		while (node.getKey() != key) {
-			parent = node;
-			if (key < node.getKey()) {
-				ItsLeft = true;
-				node = node.getLeft();
-				node.setParent(parent);
-			} else {
-				ItsLeft = false;
-				node = node.getRight();
-				node.setParent(parent);
-			}
-			if (node == null) {
-				return false;
-			}
+	private void transplant(Node a, Node b){
+		if(a.getParent() == nil){
+			root = b;
 		}
-		if (node.getLeft() == null && node.getRight() == null) {
-			if (node == root) {
-				root = null;
-			} else if (ItsLeft) {
-				parent.setLeft(null);
-			} else {
-				parent.setRight(null);
-			}
-		} else if (node.getRight() == null) {
-			if (node == root) {
-				root = node.getLeft();
-				root.setParent(null);
-			} else if (ItsLeft) {
-				parent.setLeft(node.getLeft());
-				node.getLeft().setParent(parent);
-			} else {
-				parent.setRight(node.getLeft());
-				node.getLeft().setParent(parent);
-			}
-		} else if (node.getLeft() == null) {
-			if (node == root) {
-				root = node.getRight();
-				root.setParent(null);
-			} else if (ItsLeft) {
-				parent.setLeft(node.getRight());
-				node.getRight().setParent(parent);
-			} else {
-				parent.setRight(node.getRight());
-				node.getRight().setParent(parent);
-			}
-		} else {
-			Node replace = replace(node);
-			if (node == root) {
-				root = replace;
-			} else if (ItsLeft) {
-				parent.setLeft(replace);
-				replace.setParent(parent);
-			} else {
-				parent.setRight(replace);
-				replace.setParent(parent);
-			}
-			replace.setLeft(node.getLeft());
-
+		else if (a == a.getParent().getLeft()){
+			a.getParent().setLeft(b);
 		}
+		else{
+			a.getParent().setRight(b);
+		}
+		b.setParent(a.getParent());
+	}
+
+	private Node successor(Node root){
+		if(root == nil || root.getLeft() == nil){
+			return root;
+		}
+		return successor(root.getLeft());
+	}
+
+	public boolean remove(int key){
+		Node z = search(key, root);
+		if (key == 0 || z == nil){
+			return false;
+		}
+		Node x, y = z;
+		int yColor = y.getColor();
+
+		if(z.getLeft() == nil){
+			x = z.getRight();
+			transplant(z, z.getRight());
+		}
+		else if(z.getRight() == nil){
+			x = z.getLeft();
+			transplant(z, z.getLeft());
+		}
+		else{
+			y = successor(z.getRight());
+			yColor = y.getColor();
+			x = y.getRight();
+			if(y.getParent() == z){
+				x.setParent(x);
+			}
+			else{
+				transplant(y, y.getRight());
+				y.setRight(z.getRight());
+				y.getRight().setParent(y);
+			}
+			transplant(z, y);
+			y.setLeft(z.getLeft());
+			y.getLeft().setParent(y);
+			y.setColor(z.getColor());
+		}
+		if(yColor == 1){
+			remove(x);
+		}
+		count--;
 		return true;
-	}*/
+	}
+
+	private void remove(Node a){
+		while(a != root && a.getColor() == 1){
+			Node a_parent = a.getParent();
+			if(a == a_parent.getLeft()) {
+				Node b = a_parent.getRight();
+				if(b.getColor() == 0){
+					b.setColor(1);
+					a_parent.setColor(0);
+					leftRotate(a_parent);
+					b = a_parent.getRight();
+				}
+				Node b_left = b.getLeft();
+				Node b_right = b.getRight();
+				if(b_left.getColor() == 1
+				&& b_right.getColor() == 1){
+					b.setColor(0);
+					a = a_parent;
+					continue;
+				}
+				else if(b_right.getColor() == 1){
+					b_left.setColor(1);
+					b.setColor(0);
+					rightRotate(b);
+					b = a_parent.getRight();
+				}
+				if(b_right.getColor() == 0){
+					b.setColor(a_parent.getColor());
+					a_parent.setColor(1);
+					b_right.setColor(1);
+					leftRotate(a_parent);
+					a = root;
+				}
+			}
+			else{
+				Node b = (a_parent.getLeft());
+				if(b.getColor() == 0){
+					b.setColor(1);
+					a_parent.setColor(0);
+					rightRotate(a_parent);
+					b = a_parent.getLeft();
+				}
+				Node b_left = b.getLeft();
+				Node b_right = b.getRight();
+				if(b_right.getColor() == 1
+				&& b_left.getColor() == 1){
+					b.setColor(0);
+					b = b.getParent();
+					continue;
+				}
+				else if(b_left.getColor() == 1){
+					b_right.setColor(1);
+					b.setColor(0);
+					leftRotate(b);
+					b = a_parent.getLeft();
+				}
+				if(b_left.getColor() == 0){
+					b.setColor(a_parent.getColor());
+					a_parent.setColor(1);
+					b_left.setColor(1);
+					rightRotate(a_parent);
+					a = root;
+				}
+			}
+		}
+		a.setColor(1);
+	}
 
 	public Node replace(Node rNode) {
 		Node rParent = rNode;

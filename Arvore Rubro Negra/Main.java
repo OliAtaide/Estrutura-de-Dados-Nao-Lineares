@@ -29,6 +29,9 @@ public class Main {
 		t.insert(27);
 		t.insert(57);
 		t.insert(44);
+		
+		t.remove(13);
+		t.remove(7);
 
 		printTree(t);
 

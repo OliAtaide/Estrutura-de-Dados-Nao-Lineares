@@ -24,48 +24,48 @@ public class Tree {
 			return false;
 		}
 
-		Node x = root, y = nil;
+		Node a = root, b = nil;
 		
-		while(x != nil){
-			y = x;
+		while(a != nil){
+			b = a;
 
-			if(x.getKey() > key){
-				x = x.getLeft();
+			if(a.getKey() > key){
+				a = a.getLeft();
 			}
-			else if (x.getKey() < key){
-				x = x.getRight();
+			else if (a.getKey() < key){
+				a = a.getRight();
 			}
 			else{
 				return false;
 			}
 		}
 
-		Node z = new Node(key, nil, nil, y, 0);
+		Node c = new Node(key, nil, nil, b, 0);
 
-		if (y == nil) {
-			root = z;
+		if (b == nil) {
+			root = c;
 		}
-		else if(z.getKey() < y.getKey()){
-			y.setLeft(z);
+		else if(c.getKey() < b.getKey()){
+			b.setLeft(c);
 		}
 		else{
-			y.setRight(z);
+			b.setRight(c);
 		}
-		insert(z);
+		insert(c);
 		count++;
 		return true;
 	}
-
-	private void insert(Node n){
-		Node y;
+	
+    private void insert(Node n){
+		Node n2;
 		Node parent = n.getParent();
 		Node parentParent = parent.getParent();
 		while(parent.getColor() == 0){
 			if(parent == parentParent.getLeft()){
-				y = parentParent.getRight();
-				if(y.getColor() == 0){
+				n2 = parentParent.getRight();
+				if(n2.getColor() == 0){
 					parent.setColor(1);
-					y.setColor(1);
+					n2.setColor(1);
 					parentParent.setColor(0);
 					n = parentParent;
 				}
@@ -80,10 +80,10 @@ public class Tree {
 				}
 			}
 			else{
-				y = parentParent.getLeft();
-				if(y.getColor() == 0){
+				n2 = parentParent.getLeft();
+				if(n2.getColor() == 0){
 					parent.setColor(1);
-					y.setColor(1);
+					n2.setColor(1);
 					parentParent.setColor(0);
 					n = parentParent;
 				}
@@ -178,40 +178,40 @@ public class Tree {
 	}
 
 	public boolean remove(int key){
-		Node z = search(key, root);
-		if (key == 0 || z == nil){
+		Node a = search(key, root);
+		if (key == 0 || a == nil){
 			return false;
 		}
-		Node x, y = z;
-		int yColor = y.getColor();
+		Node b, c = a;
+		int yColor = c.getColor();
 
-		if(z.getLeft() == nil){
-			x = z.getRight();
-			transplant(z, z.getRight());
+		if(a.getLeft() == nil){
+			b = a.getRight();
+			transplant(a, a.getRight());
 		}
-		else if(z.getRight() == nil){
-			x = z.getLeft();
-			transplant(z, z.getLeft());
+		else if(a.getRight() == nil){
+			b = a.getLeft();
+			transplant(a, a.getLeft());
 		}
 		else{
-			y = successor(z.getRight());
-			yColor = y.getColor();
-			x = y.getRight();
-			if(y.getParent() == z){
-				x.setParent(x);
+			c = successor(a.getRight());
+			yColor = c.getColor();
+			b = c.getRight();
+			if(c.getParent() == a){
+				b.setParent(b);
 			}
 			else{
-				transplant(y, y.getRight());
-				y.setRight(z.getRight());
-				y.getRight().setParent(y);
+				transplant(c, c.getRight());
+				c.setRight(a.getRight());
+				c.getRight().setParent(c);
 			}
-			transplant(z, y);
-			y.setLeft(z.getLeft());
-			y.getLeft().setParent(y);
-			y.setColor(z.getColor());
+			transplant(a, c);
+			c.setLeft(a.getLeft());
+			c.getLeft().setParent(c);
+			c.setColor(a.getColor());
 		}
 		if(yColor == 1){
-			remove(x);
+			remove(b);
 		}
 		count--;
 		return true;
@@ -282,24 +282,6 @@ public class Tree {
 			}
 		}
 		a.setColor(1);
-	}
-
-	public Node replace(Node rNode) {
-		Node rParent = rNode;
-		Node r = rNode;
-
-		Node node = rNode.getRight();
-
-		while (node != null) {
-			rParent = r;
-			r = node;
-			node = node.getLeft();
-		}
-		if (r != rNode.getRight()) {
-			rParent.setLeft(r.getRight());
-			r.setRight(rNode.getRight());
-		}
-		return r;
 	}
 
 	public Node search(int key) {

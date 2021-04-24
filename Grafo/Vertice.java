@@ -25,4 +25,12 @@ public class Vertice {
     public void addSaida(Aresta aresta){
         saida.add(aresta);
     }
+
+    public ArrayList<Aresta> getEntrada(){
+        return entrada;
+    }
+
+    public ArrayList<Aresta> getSaida(){
+        return saida;
+    }
 }

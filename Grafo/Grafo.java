@@ -33,19 +33,34 @@ public class Grafo {
     return false;
   }
 
-  public boolean rmVertice(int valor) {
-    Vertice vertice = getVertice(valor);
-    if (vertice != null) {
-      // codigo
+  public boolean rmAresta(int valor) {
+    Aresta aresta = getAresta(valor);
+    if (aresta != null) {
+      Vertice inicio = aresta.getInicio(), fim = aresta.getFim();
+      inicio.getSaida().remove(aresta);
+      fim.getEntrada().remove(aresta);
+      arestas.remove(aresta);
       return true;
     }
     return false;
   }
 
-  public boolean rmAresta(int valor) {
-    Aresta aresta = getAresta(valor);
-    if (aresta != null) {
-      // codigo
+  public boolean rmVertice(int valor) {
+    Vertice vertice = getVertice(valor);
+    if (vertice != null) {
+      for(int e = 0; e < vertice.getEntrada().size(); e++){
+        Aresta entrada = vertice.getEntrada().get(e);
+        if(entrada != null){
+          rmAresta(entrada.getValor());
+        }
+      }
+      for(int s = 0; s < vertice.getSaida().size(); s++){
+        Aresta saida = vertice.getSaida().get(s);
+        if(saida != null){
+          rmAresta(saida.getValor());
+        }
+      }
+      vertices.remove(vertice);
       return true;
     }
     return false;
@@ -86,18 +101,7 @@ public class Grafo {
     }
     return false;
   }
-
-  public ArrayList<Aresta> arestasIncidentes(int valor) {
-    Vertice vertice = getVertice(valor);
-    if (vertice != null) {
-      ArrayList<Aresta> incidentes = new ArrayList<>();
-      incidentes.addAll(vertice.getEntrada());
-      incidentes.addAll(vertice.getSaida());
-      return incidentes;
-    }
-    return null;
-  }
-
+  
   public int grau(int valor) {
     int grau = 0;
     Vertice vertice = getVertice(valor);
@@ -129,5 +133,54 @@ public class Grafo {
       }
     }
     return matriz;
+  }
+
+  public boolean eAdjacente(int v, int w){
+    Vertice vertice = getVertice(v), vizinho = getVertice(w);
+    if(vertice != null && vizinho != null){
+      for(int i = 0; i < arestas.size(); i++){
+        Vertice inicio = arestas.get(i).getInicio();
+        Vertice fim = arestas.get(i).getFim();
+        
+        boolean caso1 = vertice == inicio && vizinho == fim;
+        boolean caso2 = vizinho == inicio && vertice == fim;
+
+        if(caso1 || caso2){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public ArrayList<Vertice> finalVertices(int valor){
+    Aresta aresta = getAresta(valor);
+    if (aresta != null){
+      ArrayList<Vertice> vertices = new ArrayList<>();
+      if(aresta.getInicio() != null){
+        vertices.add(aresta.getInicio());
+      }
+      if(aresta.getFim() != null){
+        vertices.add(aresta.getFim());
+      }
+      return vertices;
+    }
+    return null;
+  }
+
+  public Vertice oposto(int v, int a){
+    Vertice vertice = getVertice(v);
+    Aresta aresta = getAresta(a);
+    if(vertice != null && aresta != null){
+      if(aresta.getInicio() == vertice || aresta.getFim() == vertice){
+        if(aresta.getInicio() != vertice){
+          return aresta.getInicio();
+        }
+        else if(aresta.getFim() != vertice){
+          return aresta.getFim();
+        }
+      }
+    }
+    return null;
   }
 }
